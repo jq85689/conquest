@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FocusQuest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="animated-bg"></div>
+
+    <main class="app">
+      <header class="header">
+        <div class="avatar" id="avatar">🌱</div>
+        <div class="level-info">
+          <h1 id="levelTitle">Beginner</h1>
+          <p id="levelDesc">Stay focused and level up!</p>
+        </div>
+        <div class="level-badge" id="levelBadge">1</div>
+      </header>
+
+      <section class="progress-section">
+        <svg class="progress-ring" viewBox="0 0 200 200">
+          <circle class="progress-ring__background" cx="100" cy="100" r="90" />
+          <circle class="progress-ring__progress" id="progressCircle" cx="100" cy="100" r="90" />
+        </svg>
+        <div class="progress-text">
+          <div><span id="xpValue">0</span> / <span id="xpNeeded">100</span> XP</div>
+          <div><span id="progressPercent">0%</span> to next level</div>
+          <div>🔥 <span id="streakValue">0</span> day streak</div>
+        </div>
+      </section>
+
+      <section class="task-section">
+        <div id="taskCard" class="task-card">Click below to start your first task!</div>
+        <div class="task-buttons">
+          <button id="getTaskBtn" class="btn primary">🎯 Get Task</button>
+          <button id="completeBtn" class="btn success hidden">✅ Complete</button>
+          <button id="skipBtn" class="btn danger hidden">⏭ Skip</button>
+        </div>
+      </section>
+
+      <section class="badges-section">
+        <h2>🏅 Badges (<span id="badgeCount">0</span>)</h2>
+        <div id="badgesGrid" class="badges-grid"></div>
+      </section>
+
+      <div id="message" class="message"></div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
