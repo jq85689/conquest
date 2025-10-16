@@ -10,4 +10,4 @@ Thumbs.db
 *.tmp
 
 # Optional: tasks.json if user-generated
-tasks.json
+#tasks.json
