@@ -6,13 +6,12 @@ const state = {
   badges: [],
   currentTask: null,
   lastTaskDate: null,
-  lastTaskId: null
+  lastTaskId: null // prevent same task twice in a row
 };
 
 function saveState() {
   localStorage.setItem("focusQuestState", JSON.stringify(state));
 }
-
 function loadState() {
   const saved = localStorage.getItem("focusQuestState");
   if (saved) Object.assign(state, JSON.parse(saved));
@@ -101,61 +100,11 @@ function updateUI() {
   animateValue(dom.streakValue, parseInt(dom.streakValue.textContent), state.streak, 500);
 
   const percent = Math.min(state.xp / getXpNeeded(state.level), 1);
-  const offset = 339.292 * (1 - percent);
+  const offset = 565.48 * (1 - percent);
   dom.progressCircle.style.strokeDashoffset = offset;
 }
 
-// ===== TASK LOGIC =====
-function getDifficultyStars(d) {
-  return "★".repeat(d) + "☆".repeat(5 - d);
-}
-
-async function loadTasks() {
-  try {
-    const res = await fetch("tasks.json");
-    if (!res.ok) throw new Error("Tasks couldn't be loaded");
-    return await res.json();
-  } catch (err) {
-    showMessage("⚠️ Error loading tasks");
-    return [];
-  }
-}
-
-function renderTask(task) {
-  dom.taskCard.innerHTML = `
-    <div class="task-header">
-      <div><strong>${task.category}</strong> • ${task.time}</div>
-      <div class="task-difficulty">${getDifficultyStars(task.difficulty)}</div>
-    </div>
-    <div>${task.task}</div>
-    <div style="color:var(--accent);">+${task.xp} XP</div>
-  `;
-}
-
-function getRandomTask(tasks) {
-  const available = tasks.filter(t => t.level === state.level && t.id !== state.lastTaskId);
-  if (available.length === 0) return { task: "No tasks available for this level", category: "", difficulty: 1, time: "", xp: 0, id: null };
-  const task = available[Math.floor(Math.random() * available.length)];
-  state.lastTaskId = task.id;
-  return task;
-}
-
-function levelUpCongrats() {
-  const lvl = levels[state.level - 1];
-  showMessage(`🎉 Congratulations! You've reached ${lvl.title}!`, 5000);
-  showConfetti();
-}
-
-function checkLevelUp() {
-  let needed = getXpNeeded(state.level);
-  while (state.xp >= needed) {
-    state.xp -= needed;
-    state.level++;
-    levelUpCongrats();
-    needed = getXpNeeded(state.level);
-  }
-}
-
+// ===== BADGES =====
 function checkBadges() {
   badges.forEach(b => {
     if (state.badges.includes(b.id)) return;
@@ -180,7 +129,37 @@ function renderBadges() {
   });
 }
 
-// ===== DAILY LIMIT LOGIC =====
+// ===== LEVEL-UP =====
+function levelUpCongrats() {
+  const lvl = levels[state.level - 1];
+  showMessage(`🎉 Congratulations! You've reached ${lvl.title}!`, 5000);
+  showConfetti();
+}
+
+function checkLevelUp() {
+  let needed = getXpNeeded(state.level);
+  while (state.xp >= needed) {
+    state.xp -= needed;
+    state.level++;
+    levelUpCongrats();
+    needed = getXpNeeded(state.level);
+  }
+}
+
+// ===== PARTICLE BACKGROUND =====
+function createParticles() {
+  const bg = document.querySelector(".animated-bg");
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement("div");
+    p.classList.add("particle");
+    p.style.top = `${Math.random() * 100}%`;
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.animationDuration = `${10 + Math.random() * 20}s`;
+    bg.appendChild(p);
+  }
+}
+
+// ===== DAILY TASK LIMIT =====
 function getMidnightCountdown() {
   const now = new Date();
   const midnight = new Date();
@@ -212,62 +191,45 @@ function updateCountdownText(msLeft) {
   dom.getTaskBtn.textContent = `⏳ ${hrs}h ${mins}m until next task`;
 }
 
-// ===== MAIN LOGIC =====
+// ===== MAIN =====
 loadState();
-loadTasks().then(tasks => {
-  const today = new Date().toDateString();
-  if (state.lastTaskDate === today) startCountdown();
-
-  dom.getTaskBtn.addEventListener("click", () => {
-    const task = getRandomTask(tasks);
-    state.currentTask = task;
-    state.lastTaskDate = new Date().toDateString();
-    renderTask(task);
-    dom.getTaskBtn.classList.add("hidden");
-    dom.completeBtn.classList.remove("hidden");
-    dom.skipBtn.classList.remove("hidden");
-    saveState();
-    startCountdown();
-  });
-
-  dom.completeBtn.addEventListener("click", () => {
-    if (!state.currentTask) return;
-    state.xp += state.currentTask.xp;
-    state.streak++;
-    showMessage("✅ Task Completed! Keep it up!", 2500);
-    checkLevelUp();
-    checkBadges();
-    updateUI();
-    renderTask({ task: "🎯 Well done! Ready for next task?", category: "", difficulty: 1, time: "", xp: 0 });
-    dom.completeBtn.classList.add("hidden");
-    dom.skipBtn.classList.add("hidden");
-    dom.getTaskBtn.classList.remove("hidden");
-    saveState();
-  });
-
-  dom.skipBtn.addEventListener("click", () => {
-    showMessage("⏭ Task skipped. Try the next one!", 2500);
-    renderTask({ task: "⏭ Skipped! Ready for a new one?", category: "", difficulty: 1, time: "", xp: 0 });
-    dom.completeBtn.classList.add("hidden");
-    dom.skipBtn.classList.add("hidden");
-    dom.getTaskBtn.classList.remove("hidden");
-    saveState();
-  });
-});
-
 updateUI();
 renderBadges();
-
-// ===== PARTICLE BACKGROUND =====
-function createParticles() {
-  const bg = document.querySelector(".animated-bg");
-  for (let i = 0; i < 40; i++) {
-    const p = document.createElement("div");
-    p.classList.add("particle");
-    p.style.top = `${Math.random() * 100}%`;
-    p.style.left = `${Math.random() * 100}%`;
-    p.style.animationDuration = `${10 + Math.random() * 20}s`;
-    bg.appendChild(p);
-  }
-}
 createParticles();
+startCountdown();
+
+// Task button handlers (without tasks integrated yet)
+dom.getTaskBtn.addEventListener("click", () => {
+  state.currentTask = { task: "🎯 Your daily task will appear here", xp: 10 };
+  dom.taskCard.textContent = state.currentTask.task;
+  dom.getTaskBtn.classList.add("hidden");
+  dom.completeBtn.classList.remove("hidden");
+  dom.skipBtn.classList.remove("hidden");
+  state.lastTaskDate = new Date().toDateString();
+  saveState();
+  startCountdown();
+});
+
+dom.completeBtn.addEventListener("click", () => {
+  if (!state.currentTask) return;
+  state.xp += state.currentTask.xp;
+  state.streak++;
+  showMessage("✅ Task Completed! Keep it up!", 2500);
+  checkLevelUp();
+  checkBadges();
+  updateUI();
+  dom.taskCard.textContent = "🎯 Well done! Ready for next task?";
+  dom.completeBtn.classList.add("hidden");
+  dom.skipBtn.classList.add("hidden");
+  dom.getTaskBtn.classList.remove("hidden");
+  saveState();
+});
+
+dom.skipBtn.addEventListener("click", () => {
+  showMessage("⏭ Task skipped. Try the next one!", 2500);
+  dom.taskCard.textContent = "⏭ Skipped! Ready for a new one?";
+  dom.completeBtn.classList.add("hidden");
+  dom.skipBtn.classList.add("hidden");
+  dom.getTaskBtn.classList.remove("hidden");
+  saveState();
+});

@@ -9,10 +9,10 @@
 :root {
   --level-color: #6a5acd;
   --accent: #ff6b6b;
-  --bg: #f0f2f5;
-  --text: #1f1f1f;
-  --card-bg: #ffffff;
-  --shadow: rgba(0,0,0,0.15);
+  --bg: #1e1e2f;
+  --text: #ffffff;
+  --card-bg: #2a2a3f;
+  --shadow: rgba(0, 0, 0, 0.5);
 }
 
 /* ===== BODY & BACKGROUND ===== */
@@ -61,6 +61,10 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px var(--shadow);
+  margin-top: 20px;
 }
 
 .level-info {
@@ -76,7 +80,7 @@ body {
   text-align: center;
 }
 .level-text #levelTitle { font-size: 1.5rem; font-weight: 700; }
-.level-text #levelDesc { font-size: 1rem; color: #555; }
+.level-text #levelDesc { font-size: 1rem; color: #ccc; }
 
 .xp-info {
   position: relative;
@@ -88,11 +92,24 @@ body {
 
 .progress-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
 }
 .progress-ring { transform: rotate(-90deg); overflow: visible; }
-#progressCircle { stroke-dasharray: 339.292; stroke-dashoffset: 339.292; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+#progressCircle { stroke-dasharray: 565.48; stroke-dashoffset: 565.48; stroke-linecap: round; stroke-width: 10; fill: transparent; transition: stroke-dashoffset 0.5s ease; }
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.streak { margin-top: 5px; font-weight: 600; color: var(--accent); }
+.levelBadge { margin-top: 5px; font-size: 1.1rem; background: var(--accent); padding: 4px 8px; border-radius: 12px; }
 
 /* ===== MAIN TASK AREA ===== */
 .app-main {
@@ -109,8 +126,8 @@ body {
   width: 100%;
   background: var(--card-bg);
   border-radius: 16px;
-  box-shadow: 0 4px 12px var(--shadow);
-  padding: 20px;
+  box-shadow: 0 6px 15px var(--shadow);
+  padding: 25px 20px;
   font-size: 1.1rem;
   text-align: center;
   transition: transform 0.3s ease;
@@ -122,9 +139,10 @@ body {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 10px;
 }
 .task-buttons button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   border: none;
   border-radius: 12px;
   background: var(--level-color);
@@ -133,6 +151,7 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px var(--shadow);
 }
 .task-buttons button:hover {
   background: var(--accent);
@@ -158,11 +177,15 @@ body {
 .badges-footer {
   width: 100%;
   max-width: 800px;
-  padding: 15px 10px;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px var(--shadow);
+  margin-bottom: 30px;
 }
 
 .badges-grid {
@@ -176,12 +199,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 8px;
-  width: 70px;
-  background: var(--card-bg);
+  gap: 5px;
+  padding: 10px;
+  width: 80px;
+  background: var(--bg);
   border-radius: 12px;
-  box-shadow: 0 2px 6px var(--shadow);
+  box-shadow: 0 4px 10px var(--shadow);
   font-size: 0.85rem;
   text-align: center;
   transition: transform 0.3s ease;
@@ -208,8 +231,8 @@ body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
-  .progress-container { width: 100px; height: 100px; }
+  .progress-container { width: 120px; height: 120px; }
   .avatar { font-size: 2.5rem; }
-  .task-card { font-size: 1rem; padding: 15px; }
+  .task-card { font-size: 1rem; padding: 20px; }
   .task-buttons button { flex: 1 1 45%; }
 }

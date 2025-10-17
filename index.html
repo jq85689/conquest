@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Focus Quest</title>
-  
-  <!-- Versioned CSS to prevent caching -->
-  <link rel="stylesheet" href="style.css?v=1.0.2">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- PARTICLE BACKGROUND -->
@@ -21,11 +19,11 @@
         <div id="levelDesc">Stay focused and level up!</div>
       </div>
       <div class="xp-info">
-        <span id="xpValue">0</span>/<span id="xpNeeded">100</span> XP
         <div class="progress-container">
           <svg class="progress-ring" width="120" height="120">
             <circle id="progressCircle" stroke="var(--level-color)" stroke-width="10" fill="transparent" r="54" cx="60" cy="60"/>
           </svg>
+          <div class="progress-text" id="xpText">0/100</div>
         </div>
       </div>
       <div class="streak">🔥 Streak: <span id="streakValue">0</span></div>
@@ -33,7 +31,7 @@
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- MAIN TASK AREA -->
   <main class="app-main">
     <div id="taskCard" class="task-card">
       🎯 Ready for your first task?
@@ -52,7 +50,6 @@
     <div class="badge-count">Badges: <span id="badgeCount">0</span></div>
   </footer>
 
-  <!-- Versioned JS to prevent caching -->
-  <script src="app.js?v=1.0.2"></script>
+  <script src="app.js"></script>
 </body>
 </html>
