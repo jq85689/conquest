@@ -92,7 +92,7 @@ body {
   height: 120px;
 }
 .progress-ring { transform: rotate(-90deg); overflow: visible; }
-#progressCircle { stroke-dasharray: 565.48; stroke-dashoffset: 565.48; stroke-linecap: round; stroke-width: 10; fill: transparent; transition: stroke-dashoffset 0.5s ease; }
+#progressCircle { stroke-dasharray: 339.292; stroke-dashoffset: 339.292; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
 
 /* ===== MAIN TASK AREA ===== */
 .app-main {

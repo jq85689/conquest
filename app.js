@@ -6,12 +6,13 @@ const state = {
   badges: [],
   currentTask: null,
   lastTaskDate: null,
-  lastTaskId: null // prevent same task twice in a row
+  lastTaskId: null
 };
 
 function saveState() {
   localStorage.setItem("focusQuestState", JSON.stringify(state));
 }
+
 function loadState() {
   const saved = localStorage.getItem("focusQuestState");
   if (saved) Object.assign(state, JSON.parse(saved));
@@ -100,7 +101,7 @@ function updateUI() {
   animateValue(dom.streakValue, parseInt(dom.streakValue.textContent), state.streak, 500);
 
   const percent = Math.min(state.xp / getXpNeeded(state.level), 1);
-  const offset = 565.48 * (1 - percent);
+  const offset = 339.292 * (1 - percent);
   dom.progressCircle.style.strokeDashoffset = offset;
 }
 
