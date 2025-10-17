@@ -1,10 +1,12 @@
+// ===== STATE =====
 const state = {
   xp: 0,
   level: 1,
   streak: 0,
   badges: [],
   currentTask: null,
-  lastTaskDate: null
+  lastTaskDate: null,
+  lastTaskId: null // prevent same task twice in a row
 };
 
 function saveState() {
@@ -15,6 +17,7 @@ function loadState() {
   if (saved) Object.assign(state, JSON.parse(saved));
 }
 
+// ===== DOM =====
 const dom = {
   xpValue: document.getElementById("xpValue"),
   xpNeeded: document.getElementById("xpNeeded"),
@@ -34,19 +37,24 @@ const dom = {
   message: document.getElementById("message")
 };
 
+// ===== LEVELS & BADGES =====
 const levels = [
   { title: "Beginner", desc: "Stay focused and level up!", avatar: "🌱", color: "#6a5acd" },
   { title: "Apprentice", desc: "You're getting better!", avatar: "🔥", color: "#ff8c00" },
-  { title: "Expert", desc: "Your focus is unmatched!", avatar: "💎", color: "#28c76f" }
+  { title: "Expert", desc: "Your focus is unmatched!", avatar: "💎", color: "#28c76f" },
+  { title: "Master", desc: "You've reached mastery!", avatar: "🏆", color: "#ffd700" },
+  { title: "Legend", desc: "Your focus inspires others!", avatar: "🦁", color: "#ff4500" }
 ];
 
 const badges = [
   { id: "streak3", name: "3-Day Streak", icon: "🔥", req: "streak", value: 3 },
-  { id: "level2", name: "Level 2 Achieved", icon: "⭐", req: "level", value: 2 }
+  { id: "level2", name: "Level 2 Achieved", icon: "⭐", req: "level", value: 2 },
+  { id: "level4", name: "Level 4 Achieved", icon: "🏆", req: "level", value: 4 }
 ];
 
+// ===== XP LOGIC =====
 function getXpNeeded(level) {
-  return 100 + level * 50;
+  return 50 + Math.round(level * level * 30); // progressive curve
 }
 
 function animateValue(el, start, end, duration) {
@@ -60,10 +68,10 @@ function animateValue(el, start, end, duration) {
   requestAnimationFrame(step);
 }
 
-function showMessage(text) {
+function showMessage(text, duration = 3000) {
   dom.message.textContent = text;
   dom.message.classList.add("show");
-  setTimeout(() => dom.message.classList.remove("show"), 3000);
+  setTimeout(() => dom.message.classList.remove("show"), duration);
 }
 
 function showConfetti() {
@@ -78,6 +86,7 @@ function showConfetti() {
   }
 }
 
+// ===== UI UPDATE =====
 function updateUI() {
   const lvl = levels[state.level - 1] || levels[levels.length - 1];
   document.documentElement.style.setProperty("--level-color", lvl.color);
@@ -97,6 +106,7 @@ function updateUI() {
   dom.progressCircle.style.strokeDashoffset = offset;
 }
 
+// ===== TASK LOGIC =====
 function getDifficultyStars(d) {
   return "★".repeat(d) + "☆".repeat(5 - d);
 }
@@ -124,17 +134,26 @@ function renderTask(task) {
 }
 
 function getRandomTask(tasks) {
-  const available = tasks.filter(t => t.level <= state.level);
-  return available[Math.floor(Math.random() * available.length)];
+  const available = tasks.filter(t => t.level === state.level && t.id !== state.lastTaskId);
+  if (available.length === 0) return { task: "No tasks available for this level", category: "", difficulty: 1, time: "", xp: 0, id: null };
+  const task = available[Math.floor(Math.random() * available.length)];
+  state.lastTaskId = task.id;
+  return task;
+}
+
+function levelUpCongrats() {
+  const lvl = levels[state.level - 1];
+  showMessage(`🎉 Congratulations! You've reached ${lvl.title}!`, 5000);
+  showConfetti();
 }
 
 function checkLevelUp() {
-  const needed = getXpNeeded(state.level);
-  if (state.xp >= needed && state.level < levels.length) {
+  let needed = getXpNeeded(state.level);
+  while (state.xp >= needed) {
     state.xp -= needed;
     state.level++;
-    showMessage("🎉 Level Up! You are now " + levels[state.level - 1].title + "!");
-    showConfetti();
+    levelUpCongrats();
+    needed = getXpNeeded(state.level);
   }
 }
 
@@ -143,7 +162,7 @@ function checkBadges() {
     if (state.badges.includes(b.id)) return;
     if ((b.req === "streak" && state.streak >= b.value) || (b.req === "level" && state.level >= b.value)) {
       state.badges.push(b.id);
-      showMessage(`🏅 New badge: ${b.name}!`);
+      showMessage(`🏅 New badge unlocked: ${b.name}`, 4000);
       showConfetti();
     }
   });
@@ -157,13 +176,12 @@ function renderBadges() {
     const div = document.createElement("div");
     div.className = `badge-item ${unlocked ? "" : "locked"}`;
     div.innerHTML = `<div>${b.icon}</div><div>${b.name}</div>`;
-    if (!unlocked) {
-      div.title = `Reach ${b.req} ${b.value} to unlock`;
-    }
+    if (!unlocked) div.title = `Reach ${b.req} ${b.value} to unlock`;
     dom.badgesGrid.appendChild(div);
   });
 }
 
+// ===== DAILY LIMIT LOGIC =====
 function getMidnightCountdown() {
   const now = new Date();
   const midnight = new Date();
@@ -175,10 +193,7 @@ function startCountdown() {
   const msLeft = getMidnightCountdown();
   if (msLeft > 0) {
     dom.getTaskBtn.disabled = true;
-    const hrs = Math.floor(msLeft / 3600000);
-    const mins = Math.floor((msLeft % 3600000) / 60000);
-    dom.getTaskBtn.textContent = `⏳ ${hrs}h ${mins}m until next task`;
-
+    updateCountdownText(msLeft);
     const countdown = setInterval(() => {
       const left = getMidnightCountdown();
       if (left <= 0) {
@@ -187,21 +202,22 @@ function startCountdown() {
         dom.getTaskBtn.textContent = "🎯 Get Task";
         state.lastTaskDate = null;
         saveState();
-      } else {
-        const hrs = Math.floor(left / 3600000);
-        const mins = Math.floor((left % 3600000) / 60000);
-        dom.getTaskBtn.textContent = `⏳ ${hrs}h ${mins}m until next task`;
-      }
+      } else updateCountdownText(left);
     }, 60000);
   }
 }
 
+function updateCountdownText(msLeft) {
+  const hrs = Math.floor(msLeft / 3600000);
+  const mins = Math.floor((msLeft % 3600000) / 60000);
+  dom.getTaskBtn.textContent = `⏳ ${hrs}h ${mins}m until next task`;
+}
+
+// ===== MAIN LOGIC =====
 loadState();
 loadTasks().then(tasks => {
   const today = new Date().toDateString();
-  if (state.lastTaskDate === today) {
-    startCountdown();
-  }
+  if (state.lastTaskDate === today) startCountdown();
 
   dom.getTaskBtn.addEventListener("click", () => {
     const task = getRandomTask(tasks);
@@ -219,10 +235,11 @@ loadTasks().then(tasks => {
     if (!state.currentTask) return;
     state.xp += state.currentTask.xp;
     state.streak++;
+    showMessage("✅ Task Completed! Keep it up!", 2500);
     checkLevelUp();
     checkBadges();
     updateUI();
-    renderTask({ task: "✅ Task Completed!", category: "", difficulty: 1, time: "", xp: 0 });
+    renderTask({ task: "🎯 Well done! Ready for next task?", category: "", difficulty: 1, time: "", xp: 0 });
     dom.completeBtn.classList.add("hidden");
     dom.skipBtn.classList.add("hidden");
     dom.getTaskBtn.classList.remove("hidden");
@@ -230,6 +247,7 @@ loadTasks().then(tasks => {
   });
 
   dom.skipBtn.addEventListener("click", () => {
+    showMessage("⏭ Task skipped. Try the next one!", 2500);
     renderTask({ task: "⏭ Skipped! Ready for a new one?", category: "", difficulty: 1, time: "", xp: 0 });
     dom.completeBtn.classList.add("hidden");
     dom.skipBtn.classList.add("hidden");
@@ -241,6 +259,7 @@ loadTasks().then(tasks => {
 updateUI();
 renderBadges();
 
+// ===== PARTICLE BACKGROUND =====
 function createParticles() {
   const bg = document.querySelector(".animated-bg");
   for (let i = 0; i < 40; i++) {
@@ -253,3 +272,4 @@ function createParticles() {
   }
 }
 createParticles();
+// ===== END OF FILE =====

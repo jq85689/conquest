@@ -1,64 +1,60 @@
-<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Conquest-Self-Confidence Coach</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="animated-bg"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Quest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== PARTICLE BACKGROUND ===== -->
+  <div class="animated-bg"></div>
 
-    <main class="app">
-      <header class="header">
-        <div class="avatar" id="avatar">🌱</div>
-        <div class="level-info">
-          <h1 id="levelTitle">Beginner</h1>
-          <p id="levelDesc">Stay focused and level up!</p>
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="level-info">
+      <div id="avatar" class="avatar">🌱</div>
+      <div class="level-text">
+        <div id="levelTitle">Beginner</div>
+        <div id="levelDesc">Stay focused and level up!</div>
+      </div>
+      <div class="xp-info">
+        <span id="xpValue">0</span>/<span id="xpNeeded">100</span> XP
+        <div class="progress-container">
+          <svg class="progress-ring" width="120" height="120">
+            <circle id="progressCircle" stroke="var(--level-color)" stroke-width="10" fill="transparent" r="90" cx="60" cy="60"/>
+          </svg>
         </div>
-        <div class="level-badge" id="levelBadge">1</div>
-      </header>
+      </div>
+      <div class="streak">🔥 Streak: <span id="streakValue">0</span></div>
+      <div class="levelBadge">1</div>
+    </div>
+  </header>
 
-      <section class="progress-section">
-        <svg class="progress-ring" viewBox="0 0 200 200">
-          <circle class="progress-ring__background" cx="100" cy="100" r="90" />
-          <circle class="progress-ring__progress" id="progressCircle" cx="100" cy="100" r="90" />
-        </svg>
-        <div class="progress-text">
-          <div><span id="xpValue">0</span> / <span id="xpNeeded">100</span> XP</div>
-          <div><span id="progressPercent">0%</span> to next level</div>
-          <div>🔥 <span id="streakValue">0</span> day streak</div>
-        </div>
-      </section>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="app-main">
+    <!-- TASK CARD -->
+    <div id="taskCard" class="task-card">
+      🎯 Ready for your first task?
+    </div>
 
-      <section class="task-section">
-        <div id="taskCard" class="task-card">Click below to start your first task!</div>
-        <div class="task-buttons">
-          <button id="getTaskBtn" class="btn primary">🎯 Get Task</button>
-          <button id="completeBtn" class="btn success hidden">✅ Complete</button>
-          <button id="skipBtn" class="btn danger hidden">⏭ Skip</button>
-        </div>
-      </section>
+    <!-- BUTTONS -->
+    <div class="task-buttons">
+      <button id="getTaskBtn">🎯 Get Task</button>
+      <button id="completeBtn" class="hidden">✅ Complete</button>
+      <button id="skipBtn" class="hidden">⏭ Skip</button>
+    </div>
 
-      <section class="badges-section">
-        <h2>🏅 Badges (<span id="badgeCount">0</span>)</h2>
-        <div id="badgesGrid" class="badges-grid"></div>
-      </section>
+    <!-- MOTIVATIONAL MESSAGE -->
+    <div id="message" class="message"></div>
+  </main>
 
-      <div id="message" class="message"></div>
+  <!-- ===== BADGES ===== -->
+  <footer class="badges-footer">
+    <div id="badgesGrid" class="badges-grid"></div>
+    <div class="badge-count">Badges: <span id="badgeCount">0</span></div>
+  </footer>
 
-      <footer style="text-align: center; font-size: 0.9rem; padding: 1rem; color: #666; border-top: 1px solid #ddd;">
-        <a href="legalnotice.html" style="margin-right: 1rem; text-decoration: none; color: inherit;">Legal Notice</a>
-        <a href="privacypolicy.html" style="text-decoration: none; color: inherit;">Privacy Policy</a>
-      </footer>
-    </main>
-
-    <script src="app.js"></script>
-  </body>
+  <script src="app.js"></script>
+</body>
 </html>
