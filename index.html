@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ===== PARTICLE BACKGROUND ===== -->
+  <!-- PARTICLE BACKGROUND -->
   <div class="animated-bg"></div>
 
-  <!-- ===== HEADER ===== -->
+  <!-- HEADER -->
   <header class="app-header">
     <div class="level-info">
       <div id="avatar" class="avatar">🌱</div>
@@ -22,7 +22,7 @@
         <span id="xpValue">0</span>/<span id="xpNeeded">100</span> XP
         <div class="progress-container">
           <svg class="progress-ring" width="120" height="120">
-            <circle id="progressCircle" stroke="var(--level-color)" stroke-width="12" fill="transparent" r="54" cx="60" cy="60"/>
+            <circle id="progressCircle" stroke="var(--level-color)" stroke-width="10" fill="transparent" r="54" cx="60" cy="60"/>
           </svg>
         </div>
       </div>
@@ -31,22 +31,20 @@
     </div>
   </header>
 
-  <!-- ===== MAIN CONTENT ===== -->
+  <!-- MAIN -->
   <main class="app-main">
     <div id="taskCard" class="task-card">
       🎯 Ready for your first task?
     </div>
-
     <div class="task-buttons">
       <button id="getTaskBtn">🎯 Get Task</button>
       <button id="completeBtn" class="hidden">✅ Complete</button>
       <button id="skipBtn" class="hidden">⏭ Skip</button>
     </div>
-
     <div id="message" class="message"></div>
   </main>
 
-  <!-- ===== BADGES ===== -->
+  <!-- BADGES -->
   <footer class="badges-footer">
     <div id="badgesGrid" class="badges-grid"></div>
     <div class="badge-count">Badges: <span id="badgeCount">0</span></div>

@@ -9,7 +9,7 @@
 :root {
   --level-color: #6a5acd;
   --accent: #ff6b6b;
-  --bg: #e0e0e0;
+  --bg: #f0f2f5;
   --text: #1f1f1f;
   --card-bg: #ffffff;
   --shadow: rgba(0,0,0,0.15);
@@ -43,12 +43,12 @@ body {
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  opacity: 0.3;
+  opacity: 0.6;
   animation: float linear infinite;
 }
 @keyframes float {
-  0% { transform: translateY(0) scale(0.5); opacity: 0.3; }
-  50% { transform: translateY(-100px) scale(1); opacity: 0.6; }
+  0% { transform: translateY(0) scale(0.5); opacity: 0.5; }
+  50% { transform: translateY(-100px) scale(1); opacity: 0.8; }
   100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
 }
 
@@ -70,21 +70,13 @@ body {
   gap: 10px;
 }
 
-.avatar {
-  font-size: 3rem;
-}
+.avatar { font-size: 3rem; }
 
 .level-text {
   text-align: center;
 }
-.level-text #levelTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-.level-text #levelDesc {
-  font-size: 1rem;
-  color: #555;
-}
+.level-text #levelTitle { font-size: 1.5rem; font-weight: 700; }
+.level-text #levelDesc { font-size: 1rem; color: #555; }
 
 .xp-info {
   position: relative;
@@ -99,41 +91,8 @@ body {
   width: 120px;
   height: 120px;
 }
-
-.progress-ring {
-  transform: rotate(-90deg);
-  overflow: visible;
-}
-
-#progressCircle {
-  stroke-dasharray: 565.48; /* 2 * PI * 90 (matches HTML r=90) */
-  stroke-dashoffset: 565.48;
-  stroke-linecap: round;
-  stroke: var(--level-color);
-  fill: transparent;
-  transition: stroke-dashoffset 0.5s ease;
-}
-
-/* XP percent text */
-#progressPercent {
-  position: absolute;
-  font-weight: 700;
-  font-size: 1.1rem;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Streak & Level Badge */
-.streak {
-  margin-top: 5px;
-  font-weight: 600;
-}
-.levelBadge {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--level-color);
-}
+.progress-ring { transform: rotate(-90deg); overflow: visible; }
+#progressCircle { stroke-dasharray: 565.48; stroke-dashoffset: 565.48; stroke-linecap: round; stroke-width: 10; fill: transparent; transition: stroke-dashoffset 0.5s ease; }
 
 /* ===== MAIN TASK AREA ===== */
 .app-main {
@@ -156,18 +115,14 @@ body {
   text-align: center;
   transition: transform 0.3s ease;
 }
-.task-card:hover {
-  transform: translateY(-5px);
-}
+.task-card:hover { transform: translateY(-5px); }
 
-/* ===== BUTTONS ===== */
 .task-buttons {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .task-buttons button {
   padding: 10px 20px;
   border: none;
@@ -183,9 +138,7 @@ body {
   background: var(--accent);
   transform: translateY(-2px);
 }
-.task-buttons button.hidden {
-  display: none;
-}
+.task-buttons button.hidden { display: none; }
 
 /* ===== MESSAGE ===== */
 .message {
@@ -233,41 +186,30 @@ body {
   text-align: center;
   transition: transform 0.3s ease;
 }
-.badge-item:hover {
-  transform: translateY(-3px);
-}
-.badge-item.locked {
-  opacity: 0.4;
-}
+.badge-item:hover { transform: translateY(-3px); }
+.badge-item.locked { opacity: 0.4; }
 
 /* ===== CONFETTI ===== */
 .confetti {
-  position: absolute;
+  position: fixed;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  background: hsl(0, 100%, 50%);
+  z-index: 9999;
   pointer-events: none;
+  opacity: 0.8;
+  border-radius: 50%;
   animation: confetti-fall linear forwards;
 }
 @keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
-  .progress-container {
-    width: 100px;
-    height: 100px;
-  }
-  .avatar {
-    font-size: 2.5rem;
-  }
-  .task-card {
-    font-size: 1rem;
-    padding: 15px;
-  }
-  .task-buttons button {
-    flex: 1 1 45%;
-  }
+  .progress-container { width: 100px; height: 100px; }
+  .avatar { font-size: 2.5rem; }
+  .task-card { font-size: 1rem; padding: 15px; }
+  .task-buttons button { flex: 1 1 45%; }
 }

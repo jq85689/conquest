@@ -6,25 +6,24 @@ const state = {
   badges: [],
   currentTask: null,
   lastTaskDate: null,
-  lastTaskId: null
+  lastTaskId: null // prevent same task twice in a row
 };
 
 function saveState() {
   localStorage.setItem("focusQuestState", JSON.stringify(state));
 }
-
 function loadState() {
   const saved = localStorage.getItem("focusQuestState");
   if (saved) Object.assign(state, JSON.parse(saved));
 }
 
-// ===== DOM =====
+// ===== DOM ELEMENTS =====
 const dom = {
   xpValue: document.getElementById("xpValue"),
   xpNeeded: document.getElementById("xpNeeded"),
   levelTitle: document.getElementById("levelTitle"),
   levelDesc: document.getElementById("levelDesc"),
-  levelBadge: document.getElementById("levelBadge"),
+  levelBadge: document.querySelector(".levelBadge"),
   avatar: document.getElementById("avatar"),
   progressCircle: document.getElementById("progressCircle"),
   streakValue: document.getElementById("streakValue"),
@@ -115,7 +114,7 @@ async function loadTasks() {
     const res = await fetch("tasks.json");
     if (!res.ok) throw new Error("Tasks couldn't be loaded");
     return await res.json();
-  } catch {
+  } catch (err) {
     showMessage("⚠️ Error loading tasks");
     return [];
   }
@@ -184,13 +183,13 @@ function renderBadges() {
 function getMidnightCountdown() {
   const now = new Date();
   const midnight = new Date();
-  midnight.setHours(24,0,0,0);
+  midnight.setHours(24, 0, 0, 0);
   return midnight - now;
 }
 
 function startCountdown() {
   const msLeft = getMidnightCountdown();
-  if (state.lastTaskDate === new Date().toDateString()) {
+  if (msLeft > 0) {
     dom.getTaskBtn.disabled = true;
     updateCountdownText(msLeft);
     const countdown = setInterval(() => {
@@ -215,10 +214,8 @@ function updateCountdownText(msLeft) {
 // ===== MAIN LOGIC =====
 loadState();
 loadTasks().then(tasks => {
-
-  startCountdown();
-  updateUI();
-  renderBadges();
+  const today = new Date().toDateString();
+  if (state.lastTaskDate === today) startCountdown();
 
   dom.getTaskBtn.addEventListener("click", () => {
     const task = getRandomTask(tasks);
@@ -229,6 +226,7 @@ loadTasks().then(tasks => {
     dom.completeBtn.classList.remove("hidden");
     dom.skipBtn.classList.remove("hidden");
     saveState();
+    startCountdown();
   });
 
   dom.completeBtn.addEventListener("click", () => {
@@ -255,6 +253,9 @@ loadTasks().then(tasks => {
     saveState();
   });
 });
+
+updateUI();
+renderBadges();
 
 // ===== PARTICLE BACKGROUND =====
 function createParticles() {
