@@ -9,10 +9,10 @@
 :root {
   --level-color: #6a5acd;
   --accent: #ff6b6b;
-  --bg: #f5f6fa;
+  --bg: #e0e0e0;
   --text: #1f1f1f;
   --card-bg: #ffffff;
-  --shadow: rgba(0,0,0,0.1);
+  --shadow: rgba(0,0,0,0.15);
 }
 
 /* ===== BODY & BACKGROUND ===== */
@@ -43,12 +43,12 @@ body {
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  opacity: 0.6;
+  opacity: 0.3;
   animation: float linear infinite;
 }
 @keyframes float {
-  0% { transform: translateY(0) scale(0.5); opacity: 0.5; }
-  50% { transform: translateY(-100px) scale(1); opacity: 0.8; }
+  0% { transform: translateY(0) scale(0.5); opacity: 0.3; }
+  50% { transform: translateY(-100px) scale(1); opacity: 0.6; }
   100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
 }
 
@@ -99,14 +99,29 @@ body {
   width: 120px;
   height: 120px;
 }
+
 .progress-ring {
   transform: rotate(-90deg);
+  overflow: visible;
 }
+
 #progressCircle {
-  stroke-dasharray: 565.48;
+  stroke-dasharray: 565.48; /* 2 * PI * 90 (matches HTML r=90) */
   stroke-dashoffset: 565.48;
-  transition: stroke-dashoffset 0.5s ease;
   stroke-linecap: round;
+  stroke: var(--level-color);
+  fill: transparent;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+/* XP percent text */
+#progressPercent {
+  position: absolute;
+  font-weight: 700;
+  font-size: 1.1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* Streak & Level Badge */
@@ -143,17 +158,6 @@ body {
 }
 .task-card:hover {
   transform: translateY(-5px);
-}
-
-.task-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: 600;
-  color: #333;
-}
-.task-difficulty {
-  color: var(--accent);
 }
 
 /* ===== BUTTONS ===== */
@@ -236,6 +240,20 @@ body {
   opacity: 0.4;
 }
 
+/* ===== CONFETTI ===== */
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .progress-container {
@@ -253,4 +271,3 @@ body {
     flex: 1 1 45%;
   }
 }
-/* ===== END OF FILE ===== */
