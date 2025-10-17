@@ -6,12 +6,13 @@ const state = {
   badges: [],
   currentTask: null,
   lastTaskDate: null,
-  lastTaskId: null // prevent same task twice in a row
+  lastTaskId: null
 };
 
 function saveState() {
   localStorage.setItem("focusQuestState", JSON.stringify(state));
 }
+
 function loadState() {
   const saved = localStorage.getItem("focusQuestState");
   if (saved) Object.assign(state, JSON.parse(saved));
@@ -21,7 +22,6 @@ function loadState() {
 const dom = {
   xpValue: document.getElementById("xpValue"),
   xpNeeded: document.getElementById("xpNeeded"),
-  progressPercent: document.getElementById("progressPercent"),
   levelTitle: document.getElementById("levelTitle"),
   levelDesc: document.getElementById("levelDesc"),
   levelBadge: document.getElementById("levelBadge"),
@@ -54,7 +54,7 @@ const badges = [
 
 // ===== XP LOGIC =====
 function getXpNeeded(level) {
-  return 50 + Math.round(level * level * 30); // progressive curve
+  return 50 + Math.round(level * level * 30);
 }
 
 function animateValue(el, start, end, duration) {
@@ -101,7 +101,6 @@ function updateUI() {
   animateValue(dom.streakValue, parseInt(dom.streakValue.textContent), state.streak, 500);
 
   const percent = Math.min(state.xp / getXpNeeded(state.level), 1);
-  dom.progressPercent.textContent = `${Math.round(percent * 100)}%`;
   const offset = 565.48 * (1 - percent);
   dom.progressCircle.style.strokeDashoffset = offset;
 }
@@ -116,7 +115,7 @@ async function loadTasks() {
     const res = await fetch("tasks.json");
     if (!res.ok) throw new Error("Tasks couldn't be loaded");
     return await res.json();
-  } catch (err) {
+  } catch {
     showMessage("⚠️ Error loading tasks");
     return [];
   }
@@ -185,13 +184,13 @@ function renderBadges() {
 function getMidnightCountdown() {
   const now = new Date();
   const midnight = new Date();
-  midnight.setHours(24, 0, 0, 0);
+  midnight.setHours(24,0,0,0);
   return midnight - now;
 }
 
 function startCountdown() {
   const msLeft = getMidnightCountdown();
-  if (msLeft > 0) {
+  if (state.lastTaskDate === new Date().toDateString()) {
     dom.getTaskBtn.disabled = true;
     updateCountdownText(msLeft);
     const countdown = setInterval(() => {
@@ -216,8 +215,10 @@ function updateCountdownText(msLeft) {
 // ===== MAIN LOGIC =====
 loadState();
 loadTasks().then(tasks => {
-  const today = new Date().toDateString();
-  if (state.lastTaskDate === today) startCountdown();
+
+  startCountdown();
+  updateUI();
+  renderBadges();
 
   dom.getTaskBtn.addEventListener("click", () => {
     const task = getRandomTask(tasks);
@@ -228,7 +229,6 @@ loadTasks().then(tasks => {
     dom.completeBtn.classList.remove("hidden");
     dom.skipBtn.classList.remove("hidden");
     saveState();
-    startCountdown();
   });
 
   dom.completeBtn.addEventListener("click", () => {
@@ -256,9 +256,6 @@ loadTasks().then(tasks => {
   });
 });
 
-updateUI();
-renderBadges();
-
 // ===== PARTICLE BACKGROUND =====
 function createParticles() {
   const bg = document.querySelector(".animated-bg");
@@ -272,4 +269,3 @@ function createParticles() {
   }
 }
 createParticles();
-// ===== END OF FILE =====
